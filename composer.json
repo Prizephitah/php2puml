@@ -1,0 +1,22 @@
+{
+	"name": "prizephitah/php2puml",
+	"description": "Parses PHP code and produces PlantUML code representing it.",
+	"type": "library",
+	"require": {
+		"nikic/php-parser": "^4.4"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Prizephitah\\php2puml\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Prizephitah\\php2puml\\": "tests/"
+		}
+	},
+	"prefer-stable": true
+}
