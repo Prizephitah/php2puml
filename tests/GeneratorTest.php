@@ -5,6 +5,8 @@ namespace Prizephitah\php2puml\Test;
 use PhpParser\ParserFactory;
 use Prizephitah\php2puml\Generator;
 use PHPUnit\Framework\TestCase;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class GeneratorTest extends TestCase {
 	
@@ -25,8 +27,15 @@ class Example.ExampleClass {
 EOT;
 		
 		$parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-		$generator = new Generator($parser);
+		$loader = new FilesystemLoader(__DIR__.'/../src/PlantUmlTemplates');
+		$twig = new Environment($loader);
+		
+		$generator = new Generator($parser, $twig);
 		$result = $generator->fromString($phpCode);
-		$this->assertEquals($expectedPuml, $result);
+		$this->assertEqualStrings($expectedPuml, $result);
+	}
+	
+	protected function assertEqualStrings(string $expected, $actual): void {
+		$this->assertEquals(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $actual));
 	}
 }

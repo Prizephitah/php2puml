@@ -1,0 +1,5 @@
+class {{ classLike.namespacedName|replace({'\\': '.'}) }} {
+{% for method in classLike.getMethods %}
+	{{ method.name }}()
+{% endfor %}
+}

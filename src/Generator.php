@@ -9,14 +9,16 @@ use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
+use Twig\Environment;
 
 class Generator {
 	
-	/** @var Parser */
-	protected $parser;
+	protected Parser $parser;
+	protected Environment $twig;
 	
-	public function __construct(Parser $parser) {
+	public function __construct(Parser $parser, Environment $twig) {
 		$this->parser = $parser;
+		$this->twig = $twig;
 	}
 	
 	public function fromString(string $code): string {
@@ -26,16 +28,10 @@ class Generator {
 		$nodeTraverser->addVisitor($nameResolver);
 		$nodes = $nodeTraverser->traverse($nodes);
 		
-		$output = "@startuml\r\n";
-		foreach ($this->filterClasses($nodes) as $classLike) {
-			$output .= 'class '.strtr($classLike->namespacedName, '\\', '.')." {\r\n";
-			foreach ($classLike->getMethods() as $method) {
-				$output .= '	'.$method->name."()\r\n";
-			}
-			$output .= "}\r\n";
-		}
-		$output .= '@enduml';
-		return $output;
+		$template = $this->twig->load('PlantUml.twig');
+		return $template->render([
+			'classLikes' => $this->filterClasses($nodes)
+		]);
 	}
 	
 	/**
