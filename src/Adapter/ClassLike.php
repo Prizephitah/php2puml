@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Prizephitah\php2puml\Adapter;
 
 
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Trait_;
 
@@ -53,5 +54,9 @@ class ClassLike {
 	
 	public function isTrait(): bool {
 		return $this->node instanceof Trait_;
+	}
+	
+	public function isAbstract(): bool {
+		return $this->node instanceof Class_ && $this->node->isAbstract();
 	}
 }

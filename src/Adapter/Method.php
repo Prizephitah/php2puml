@@ -36,7 +36,13 @@ class Method {
 		return (string)$this->node->returnType;
 	}
 	
-	public function isStatic(): bool {
-		return $this->node->isStatic();
+	public function getModifier():? string {
+		if ($this->node->isStatic()) {
+			return 'static';
+		}
+		if ($this->node->isAbstract()) {
+			return 'abstract';
+		}
+		return null;
 	}
 }

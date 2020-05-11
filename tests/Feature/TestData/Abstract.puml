@@ -1,0 +1,5 @@
+@startuml
+abstract class Example.ExampleAbstract {
+    {abstract} +doStuff(): void
+}
+@enduml

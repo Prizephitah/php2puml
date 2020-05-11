@@ -1,4 +1,4 @@
-{{ classLike.type }} {{ classLike.getName }} {% if classLike.trait %}<< (T,orchid) >> {% endif %}{
+{% if classLike.abstract %}abstract {% endif %}{{ classLike.type }} {{ classLike.getName }} {% if classLike.trait %}<< (T,orchid) >> {% endif %}{
 {% for constant in classLike.constants %}
     {{ constant.visibility }}const {{ constant.name }}
 {% endfor %}
@@ -6,6 +6,6 @@
     {{ property.visibility }}{{ property.type }} {{ property.name }}
 {% endfor %}
 {% for method in classLike.methods %}
-    {% if method.static %}{static} {% endif %}{{ method.visibility }}{{ method.name }}({{ method.parameters|join(', ') }}): {{ method.return }}
+    {% if method.modifier %}{ {{~ method.modifier ~}} } {% endif %}{{ method.visibility }}{{ method.name }}({{ method.parameters|join(', ') }}): {{ method.return }}
 {% endfor %}
 }

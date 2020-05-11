@@ -21,4 +21,9 @@ class ClassLikeTest extends TestCase {
 		$result = $this->generator->fromString(file_get_contents(__DIR__.'/TestData/Trait.php'));
 		$this->assertEqualStrings(file_get_contents(__DIR__.'/TestData/Trait.puml'), $result);
 	}
+	
+	public function testAbstract(): void {
+		$result = $this->generator->fromString(file_get_contents(__DIR__.'/TestData/Abstract.php'));
+		$this->assertEqualStrings(file_get_contents(__DIR__.'/TestData/Abstract.puml'), $result);
+	}
 }
