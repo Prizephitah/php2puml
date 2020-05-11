@@ -1,0 +1,31 @@
+@startuml
+class Example.Animal {
+    +speak(): void
+    +getName(): string
+}
+class Example.Dog {
+    +speak(): void
+    #bark(): void
+}
+Example.Animal <|-- Example.Dog
+interface Example.Vehicle {
+    +run(): void
+}
+interface Example.EnclosedSpace {
+    +open(): void
+}
+class Example.Car {
+    +run(): void
+    +open(): void
+}
+Example.Vehicle <|.. Example.Car
+Example.EnclosedSpace <|.. Example.Car
+interface Example.A {
+}
+interface Example.B {
+}
+interface Example.C {
+}
+Example.A <|-- Example.C
+Example.B <|-- Example.C
+@enduml

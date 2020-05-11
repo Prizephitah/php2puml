@@ -5,7 +5,10 @@ namespace Prizephitah\php2puml\Test\Feature;
 
 use Prizephitah\php2puml\Test\TestCase;
 
-class ClassLikeTest extends TestCase {
+/**
+ * Tests class constants, properties and methods; class-like types; visibility and modifiers.
+ */
+class ClassMemberTest extends TestCase {
 	
 	public function testClass(): void {
 		$result = $this->generator->fromString(file_get_contents(__DIR__.'/TestData/Class.php'));

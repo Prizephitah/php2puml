@@ -14,7 +14,8 @@
 			"Prizephitah\\php2puml\\": "src/"
 		},
 		"files": [
-			"src/Adapter/VisibilitySign.php"
+			"src/Adapter/VisibilitySign.php",
+			"src/Adapter/NormalizeNamespacedName.php"
 		]
 	},
 	"autoload-dev": {

@@ -9,3 +9,8 @@
     {% if method.modifier %}{ {{~ method.modifier ~}} } {% endif %}{{ method.visibility }}{{ method.name }}({{ method.parameters|join(', ') }}): {{ method.return }}
 {% endfor %}
 }
+{% if classLike.extends|length > 0 %}
+    {%~ for relationship, reference in classLike.extends %}
+        {{~ reference }} {{ relationship }} {{ classLike.name }}
+    {%~ endfor %}
+{% endif %}

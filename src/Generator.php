@@ -10,6 +10,9 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser;
 use Twig\Environment;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\EscaperExtension;
+use Twig\Extension\ExtensionInterface;
 
 class Generator {
 	
@@ -19,6 +22,11 @@ class Generator {
 	public function __construct(Parser $parser, Environment $twig) {
 		$this->parser = $parser;
 		$this->twig = $twig;
+		
+		// Disable escaping
+		/** @var EscaperExtension $escapeExtension */
+		$escapeExtension = $this->twig->getExtension(EscaperExtension::class);
+		$escapeExtension->setDefaultStrategy(false);
 	}
 	
 	public function fromString(string $code): string {
@@ -29,9 +37,9 @@ class Generator {
 		$nodes = $nodeTraverser->traverse($nodes);
 		
 		$template = $this->twig->load('PlantUml.twig');
-		return $template->render([
+		return $this->removeEmptyLines($template->render([
 			'classLikes' => $this->filterClasses($nodes)
-		]);
+		]));
 	}
 	
 	/**
@@ -47,5 +55,9 @@ class Generator {
 				yield new Adapter\ClassLike($node);
 			}
 		}
+	}
+	
+	protected function removeEmptyLines(string $input): string {
+		return preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $input);
 	}
 }
