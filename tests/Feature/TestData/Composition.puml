@@ -1,0 +1,16 @@
+@startuml
+class Arm {
+}
+class Leg {
+}
+class Body {
+    #Arm leftArm
+    #Arm rightArm
+    #Leg leftLeg
+    #Leg rightLeg
+    #int limbs
+    #unknown
+}
+Body *-- Arm
+Body *-- Leg
+@enduml

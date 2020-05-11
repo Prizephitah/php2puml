@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Prizephitah\php2puml\Adapter;
 
 
+use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\PropertyProperty;
 
 class Property {
@@ -19,6 +20,9 @@ class Property {
 	}
 	
 	public function getType(): string {
+		if ($this->node->type instanceof Name) {
+			return (string)$this->node->type->getLast();
+		}
 		return (string)$this->node->type;
 	}
 	

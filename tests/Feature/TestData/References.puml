@@ -1,0 +1,23 @@
+@startuml
+interface Example.ExampleInterface {
+    +doStuff(): string
+}
+abstract class Example.ExampleAbstract {
+    {static} +prepareStuff(int count): void
+}
+Example.ExampleInterface <|.. Example.ExampleAbstract
+class Example.ExampleClass {
+    #Confublator conf
+    #int count
+    +doStuff(Intradicator int): string
+}
+Example.ExampleAbstract <|-- Example.ExampleClass
+Example.ExampleClass *-- OtherPackage.Confublator
+class OtherPackage.Confublator {
+    -Exception exception
+}
+OtherPackage.Confublator *-- Exception
+class OtherPackage.Intradicator {
+    #int sum
+}
+@enduml

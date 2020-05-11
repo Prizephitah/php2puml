@@ -3,7 +3,7 @@
     {{ constant.visibility }}const {{ constant.name }}
 {% endfor %}
 {% for property in classLike.properties %}
-    {{ property.visibility }}{{ property.type }} {{ property.name }}
+    {{ property.visibility }}{% if property.type %}{{ property.type }} {% endif %}{{ property.name }}
 {% endfor %}
 {% for method in classLike.methods %}
     {% if method.modifier %}{ {{~ method.modifier ~}} } {% endif %}{{ method.visibility }}{{ method.name }}({{ method.parameters|join(', ') }}): {{ method.return }}
@@ -12,5 +12,10 @@
 {% if classLike.extends|length > 0 %}
     {%~ for relationship, reference in classLike.extends %}
         {{~ reference }} {{ relationship }} {{ classLike.name }}
+    {%~ endfor %}
+{% endif %}
+{% if classLike.references|length > 0 %}
+    {%~for relationship, reference in classLike.references %}
+        {{~ classLike.name }} {{ relationship }} {{ reference }}
     {%~ endfor %}
 {% endif %}

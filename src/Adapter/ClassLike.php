@@ -6,6 +6,7 @@ namespace Prizephitah\php2puml\Adapter;
 
 
 use phpDocumentor\Reflection\Types\Self_;
+use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Trait_;
@@ -81,6 +82,19 @@ class ClassLike {
 		if ($this->node instanceof Interface_) {
 			foreach ($this->node->extends as $extension) {
 				yield self::RELATIONSHIP_GENERALIZATION => normalizeNamespacedName((string)$extension);
+			}
+		}
+	}
+	
+	public function getReferences(): iterable {
+		$types = [];
+		foreach ($this->node->getProperties() as $property) {
+			if ($property->type instanceof Name) {
+				if (in_array((string)$property->type, $types)) {
+					continue;
+				}
+				$types[] = (string)$property->type;
+				yield self::RELATIONSHIP_COMPOSITION => (string)normalizeNamespacedName((string)$property->type);
 			}
 		}
 	}
