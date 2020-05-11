@@ -16,4 +16,9 @@ class ClassLikeTest extends TestCase {
 		$result = $this->generator->fromString(file_get_contents(__DIR__.'/TestData/Interface.php'));
 		$this->assertEqualStrings(file_get_contents(__DIR__.'/TestData/Interface.puml'), $result);
 	}
+	
+	public function testTrait(): void {
+		$result = $this->generator->fromString(file_get_contents(__DIR__.'/TestData/Trait.php'));
+		$this->assertEqualStrings(file_get_contents(__DIR__.'/TestData/Trait.puml'), $result);
+	}
 }

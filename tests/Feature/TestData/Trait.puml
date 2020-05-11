@@ -1,0 +1,5 @@
+@startuml
+class Example.ExampleTrait << (T,orchid) >> {
+    +doStuff(int count, string input): bool
+}
+@enduml

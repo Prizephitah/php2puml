@@ -1,4 +1,4 @@
-{{ classLike.type }} {{ classLike.getName }} {
+{{ classLike.type }} {{ classLike.getName }} {% if classLike.trait %}<< (T,orchid) >> {% endif %}{
 {% for constant in classLike.constants %}
     {{ constant.visibility }}const {{ constant.name }}
 {% endfor %}

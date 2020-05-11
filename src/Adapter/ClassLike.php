@@ -25,9 +25,6 @@ class ClassLike {
 			case Interface_::class:
 				return 'interface';
 				break;
-			case Trait_::class:
-				return 'trait';
-				break;
 			default:
 				return 'class';
 		}
@@ -52,5 +49,9 @@ class ClassLike {
 		foreach ($this->node->getMethods() as $method) {
 			yield new Method($method);
 		}
+	}
+	
+	public function isTrait(): bool {
+		return $this->node instanceof Trait_;
 	}
 }
