@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Prizephitah\php2puml;
 
@@ -36,7 +36,7 @@ class Generator {
 	
 	/**
 	 * @param array $nodes
-	 * @return ClassLike[]|\Generator
+	 * @return Adapter\ClassLike[]|\Generator
 	 */
 	protected function filterClasses(array $nodes): iterable {
 		foreach ($nodes as $node) {
@@ -44,7 +44,7 @@ class Generator {
 				yield from $this->filterClasses($node->stmts);
 			}
 			if ($node instanceof ClassLike) {
-				yield $node;
+				yield new Adapter\ClassLike($node);
 			}
 		}
 	}

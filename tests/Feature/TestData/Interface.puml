@@ -1,0 +1,6 @@
+@startuml
+interface Example.ExampleInterface {
+    +doStuff(): void
+    {static} +getResult(int count): string
+}
+@enduml

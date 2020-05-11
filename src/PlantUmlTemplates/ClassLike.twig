@@ -1,5 +1,11 @@
-class {{ classLike.namespacedName|replace({'\\': '.'}) }} {
-{% for method in classLike.getMethods %}
-	{{ method.name }}()
+{{ classLike.type }} {{ classLike.getName }} {
+{% for constant in classLike.constants %}
+    {{ constant.visibility }}const {{ constant.name }}
+{% endfor %}
+{% for property in classLike.properties %}
+    {{ property.visibility }}{{ property.type }} {{ property.name }}
+{% endfor %}
+{% for method in classLike.methods %}
+    {% if method.static %}{static} {% endif %}{{ method.visibility }}{{ method.name }}({{ method.parameters|join(', ') }}): {{ method.return }}
 {% endfor %}
 }
