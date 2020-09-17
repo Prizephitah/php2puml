@@ -29,4 +29,9 @@ class ClassMemberTest extends TestCase {
 		$result = $this->generator->fromString(file_get_contents(__DIR__.'/TestData/Abstract.php'));
 		$this->assertEqualStrings(file_get_contents(__DIR__.'/TestData/Abstract.puml'), $result);
 	}
+
+	public function testNullableTypes(): void {
+		$result = $this->generator->fromString(file_get_contents(__DIR__.'/TestData/NullableTypes.php'));
+		$this->assertEqualStrings(file_get_contents(__DIR__.'/TestData/NullableTypes.puml'), $result);
+	}
 }

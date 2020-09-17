@@ -1,0 +1,7 @@
+@startuml
+class Example.ExampleClass {
+    -const TEST
+    #int count
+    +doStuff(?string input, int amount): ?array
+}
+@enduml

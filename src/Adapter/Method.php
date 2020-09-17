@@ -30,8 +30,10 @@ class Method {
 	}
 	
 	public function getReturn(): string {
-		if ($this->node->returnType instanceof NullableType || empty($this->node->returnType)) {
+		if (empty($this->node->returnType)) {
 			return 'void';
+		} else if ($this->node->returnType instanceof NullableType) {
+			return (string)'?'.$this->node->returnType->type;
 		}
 		return (string)$this->node->returnType;
 	}

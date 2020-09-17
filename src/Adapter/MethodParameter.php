@@ -5,6 +5,7 @@ namespace Prizephitah\php2puml\Adapter;
 
 
 use PhpParser\Node\Name;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
 
 class MethodParameter {
@@ -18,6 +19,9 @@ class MethodParameter {
 	public function getType(): string {
 		if ($this->node->type instanceof Name) {
 			return (string)$this->node->type->getLast();
+		}
+		if ($this->node->type instanceof NullableType) {
+			return (string)'?'.$this->node->type->type;
 		}
 		return (string)$this->node->type;
 	}
