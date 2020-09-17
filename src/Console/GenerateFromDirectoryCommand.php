@@ -33,10 +33,12 @@ class GenerateFromDirectoryCommand extends Command {
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$generator = $this->startGenerator();
+		$output->writeln("Reading files...", OutputInterface::VERBOSITY_VERBOSE);
 
 		$result = "@startuml\n";
 		foreach ($this->fileGenerator($input) as $fileInfo) {
 			if ($fileInfo->isReadable() && mb_strtolower($fileInfo->getExtension()) === 'php') {
+				$output->writeln("\t".$fileInfo->getPathname(), OutputInterface::VERBOSITY_VERBOSE);
 				$fileContent = file_get_contents($fileInfo->getRealPath());
 				$result .= $generator->fromString($fileContent, false);
 			}
