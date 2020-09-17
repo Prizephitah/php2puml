@@ -1,5 +1,5 @@
-@startuml
+{% if enclose %}@startuml{% endif %}
 {% for classLike in classLikes %}
 {{ include('ClassLike.twig') }}
 {% endfor %}
-@enduml
+{% if enclose %}@enduml{% endif %}

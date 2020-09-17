@@ -29,7 +29,7 @@ class Generator {
 		$escapeExtension->setDefaultStrategy(false);
 	}
 	
-	public function fromString(string $code): string {
+	public function fromString(string $code, bool $enclose = true): string {
 		$nodes = $this->parser->parse($code);
 		$nameResolver = new NameResolver();
 		$nodeTraverser = new NodeTraverser();
@@ -38,7 +38,8 @@ class Generator {
 		
 		$template = $this->twig->load('PlantUml.twig');
 		return $this->removeEmptyLines($template->render([
-			'classLikes' => $this->filterClasses($nodes)
+			'classLikes' => $this->filterClasses($nodes),
+			'enclose' => $enclose
 		]));
 	}
 	
