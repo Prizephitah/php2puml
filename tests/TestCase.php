@@ -5,7 +5,7 @@ namespace Prizephitah\php2puml\Test;
 
 
 use PhpParser\ParserFactory;
-use Prizephitah\php2puml\Generator;
+use Prizephitah\php2puml\Generator\Generator;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 

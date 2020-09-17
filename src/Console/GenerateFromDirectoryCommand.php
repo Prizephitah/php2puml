@@ -6,7 +6,7 @@ namespace Prizephitah\php2puml\Console;
 
 use FilesystemIterator;
 use PhpParser\ParserFactory;
-use Prizephitah\php2puml\Generator;
+use Prizephitah\php2puml\Generator\Generator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
