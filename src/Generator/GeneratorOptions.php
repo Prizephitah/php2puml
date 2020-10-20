@@ -9,4 +9,6 @@ class GeneratorOptions {
 	public bool $enclose = true;
 
 	public ?string $namespaceFilter = null;
+
+	public bool $includeGlobalNamespace = true;
 }

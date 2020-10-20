@@ -52,16 +52,19 @@ class Generator {
 	 * @param array $nodes
 	 * @return Adapter\ClassLike[]|\Generator
 	 */
-	protected function filterClasses(array $nodes, GeneratorOptions $options): iterable {
+	protected function filterClasses(array $nodes, GeneratorOptions $options, Namespace_ $namespace = null): iterable {
 		foreach ($nodes as $node) {
 			if ($node instanceof Namespace_) {
-				if (!$this->isAllowedNamespace($node, $options)) {
+				if ($node->name === null || !self::isAllowedNamespace($node->name->parts, $options)) {
 					continue;
 				}
-				yield from $this->filterClasses($node->stmts, $options);
+				yield from $this->filterClasses($node->stmts, $options, $node);
+			}
+			if ($options->includeGlobalNamespace === false && $namespace === null) {
+				continue;
 			}
 			if ($node instanceof ClassLike) {
-				yield new Adapter\ClassLike($node);
+				yield new Adapter\ClassLike($node, $options);
 			}
 		}
 	}
@@ -70,20 +73,27 @@ class Generator {
 		return preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $input);
 	}
 
-	protected function isAllowedNamespace(Namespace_ $node, GeneratorOptions $options): bool {
+	/**
+	 * @param string[] $namespace
+	 * @param GeneratorOptions $options
+	 * @return bool
+	 */
+	public static function isAllowedNamespace(array $namespace, GeneratorOptions $options): bool {
+		// If no filter, always allow
 		if (empty($options->namespaceFilter)) {
 			return true;
 		}
-		$allowed = preg_split('([\.\\]/', $options->namespaceFilter);
+		$allowed = preg_split('/[\\\]/', $options->namespaceFilter);
 		$i = 0;
-		foreach ($node->name->parts as $candidateNamespacePart) {
+		foreach ($namespace as $candidateNamespacePart) {
 			if (!isset($allowed[$i])) {
 				return true;
 			}
-			if (mb_strtolower($candidateNamespacePart) !== $allowed[$i]) {
+			if (mb_strtolower($candidateNamespacePart) !== mb_strtolower($allowed[$i])) {
 				return false;
 			}
+			$i++;
 		}
-		return false;
+		return true;
 	}
 }

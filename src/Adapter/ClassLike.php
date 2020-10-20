@@ -7,9 +7,12 @@ namespace Prizephitah\php2puml\Adapter;
 
 use phpDocumentor\Reflection\Types\Self_;
 use PhpParser\Node\Name;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Trait_;
+use Prizephitah\php2puml\Generator\Generator;
+use Prizephitah\php2puml\Generator\GeneratorOptions;
 
 class ClassLike {
 	
@@ -21,9 +24,12 @@ class ClassLike {
 	protected const RELATIONSHIP_AGGREGATION = 'o--';
 	
 	protected \PhpParser\Node\Stmt\ClassLike $node;
+
+	protected ?GeneratorOptions $options;
 	
-	public function __construct(\PhpParser\Node\Stmt\ClassLike $classLike) {
+	public function __construct(\PhpParser\Node\Stmt\ClassLike $classLike, GeneratorOptions $options = null) {
 		$this->node = $classLike;
+		$this->options = $options;
 	}
 	
 	public function getName(): string {
@@ -71,16 +77,22 @@ class ClassLike {
 	
 	public function getExtends(): iterable {
 		if ($this->node instanceof Class_) {
-			if ($this->node->extends !== null) {
+			if ($this->node->extends !== null && $this->isAllowedNamespace((string)$this->node->extends)) {
 				yield self::RELATIONSHIP_GENERALIZATION => normalizeNamespacedName((string)$this->node->extends);
 			}
 
 			foreach ($this->node->implements as $implementation) {
+				if (!$this->isAllowedNamespace((string)$implementation)) {
+					continue;
+				}
 				yield self::RELATIONSHIP_REALIZATION => normalizeNamespacedName((string)$implementation);
 			}
 		}
 		if ($this->node instanceof Interface_) {
 			foreach ($this->node->extends as $extension) {
+				if (!$this->isAllowedNamespace((string)$extension)) {
+					continue;
+				}
 				yield self::RELATIONSHIP_GENERALIZATION => normalizeNamespacedName((string)$extension);
 			}
 		}
@@ -89,13 +101,33 @@ class ClassLike {
 	public function getReferences(): iterable {
 		$types = [];
 		foreach ($this->node->getProperties() as $property) {
-			if ($property->type instanceof Name) {
-				if (in_array((string)$property->type, $types)) {
-					continue;
-				}
-				$types[] = (string)$property->type;
-				yield self::RELATIONSHIP_COMPOSITION => (string)normalizeNamespacedName((string)$property->type);
+			$namespace = null;
+			if ($property->type instanceof NullableType) {
+				$namespace = (string)$property->type->type;
 			}
+			if ($property->type instanceof Name) {
+				$namespace = (string)$property->type;
+			}
+			if ($namespace === null) {
+				continue;
+			}
+
+			if (in_array($namespace, $types, true)) {
+				continue;
+			}
+			if (!$this->isAllowedNamespace($namespace)) {
+				continue;
+			}
+			$types[] = $namespace;
+			yield self::RELATIONSHIP_COMPOSITION => (string)normalizeNamespacedName($namespace);
 		}
+	}
+
+	protected function isAllowedNamespace(string $namespace): bool {
+		if ($this->options instanceof GeneratorOptions &&
+			!Generator::isAllowedNamespace(explode('.', (string)normalizeNamespacedName($namespace)), $this->options)) {
+			return false;
+		}
+		return true;
 	}
 }

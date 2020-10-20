@@ -7,6 +7,7 @@ namespace Prizephitah\php2puml\Console;
 use FilesystemIterator;
 use PhpParser\ParserFactory;
 use Prizephitah\php2puml\Generator\Generator;
+use Prizephitah\php2puml\Generator\GeneratorOptions;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -28,10 +29,16 @@ class GenerateFromDirectoryCommand extends Command {
 			->setHelp('Reads all code in a directory and generates PlantUML describing it.')
 			->addArgument('directory', InputArgument::REQUIRED, 'The path to the directory.')
 			->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Where to put the result.', '-')
+			->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'Namespace to require for inclusion in output', null)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+		$options = new GeneratorOptions();
+		$options->enclose = false;
+		if (!empty($input->getOption('namespace'))) {
+			$options->namespaceFilter = (string)$input->getOption('namespace');
+		}
 		$generator = $this->startGenerator();
 		$output->writeln("Reading files...", OutputInterface::VERBOSITY_VERBOSE);
 
@@ -40,7 +47,7 @@ class GenerateFromDirectoryCommand extends Command {
 			if ($fileInfo->isReadable() && mb_strtolower($fileInfo->getExtension()) === 'php') {
 				$output->writeln("\t".$fileInfo->getPathname(), OutputInterface::VERBOSITY_VERBOSE);
 				$fileContent = file_get_contents($fileInfo->getRealPath());
-				$result .= $generator->fromString($fileContent, false);
+				$result .= $generator->fromString($fileContent, $options);
 			}
 		}
 
