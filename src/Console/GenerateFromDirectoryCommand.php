@@ -30,6 +30,7 @@ class GenerateFromDirectoryCommand extends Command {
 			->addArgument('directory', InputArgument::REQUIRED, 'The path to the directory.')
 			->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Where to put the result.', '-')
 			->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'Namespace to require for inclusion in output', null)
+			->addOption('ignore-globals', null, InputOption::VALUE_NONE, 'Ignores all classes in the global namespace.')
 		;
 	}
 
@@ -39,6 +40,7 @@ class GenerateFromDirectoryCommand extends Command {
 		if (!empty($input->getOption('namespace'))) {
 			$options->namespaceFilter = (string)$input->getOption('namespace');
 		}
+		$options->includeGlobalNamespace = !(bool)$input->getOption('ignore-globals');
 		$generator = $this->startGenerator();
 		$output->writeln("Reading files...", OutputInterface::VERBOSITY_VERBOSE);
 
