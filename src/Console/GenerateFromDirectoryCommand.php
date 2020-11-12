@@ -12,9 +12,11 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -42,20 +44,42 @@ class GenerateFromDirectoryCommand extends Command {
 		}
 		$options->includeGlobalNamespace = !(bool)$input->getOption('ignore-globals');
 		$generator = $this->startGenerator();
-		$output->writeln("Reading files...", OutputInterface::VERBOSITY_VERBOSE);
+		$stdErr = $this->getStdErr($output);
+		$stdErr->writeln("Reading files...");
+		$progress = new ProgressBar($stdErr);
+		$progress->setOverwrite(true);
+		$progress->setMessage('');
+		$progress->setFormat(' %current% [%bar%] %elapsed:6s% - Processing %message%');
+		$progress->start();
+		$count = 0;
 
 		$result = "@startuml\n";
 		foreach ($this->fileGenerator($input) as $fileInfo) {
 			if ($fileInfo->isReadable() && mb_strtolower($fileInfo->getExtension()) === 'php') {
-				$output->writeln("\t".$fileInfo->getPathname(), OutputInterface::VERBOSITY_VERBOSE);
+				$progress->advance();
+				$progress->setMessage($fileInfo->getPathname());
 				$fileContent = file_get_contents($fileInfo->getRealPath());
-				$result .= $generator->fromString($fileContent, $options);
+				$part = $generator->fromString($fileContent, $options);
+				if (!empty($part)) {
+					$count++;
+					$result .= $part;
+				}
 			}
 		}
 
 		$result .= "\n@enduml";
+		$progress->finish();
+		$stdErr->writeln('');
+		$stdErr->writeln('<info>Done!</info> '.$count.' files included in output.');
 		$this->output($input->getOption('output'), $output, $result);
 		return Command::SUCCESS;
+	}
+
+	protected function getStdErr(OutputInterface $output): OutputInterface {
+		if ($output instanceof ConsoleOutputInterface) {
+			return $output->getErrorOutput();
+		}
+		return $output;
 	}
 
 	protected function startGenerator(): Generator {
